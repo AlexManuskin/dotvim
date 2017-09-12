@@ -259,4 +259,4 @@ autocmd FileType python map <buffer> <leader>8 :call Pep8()<CR>
 autocmd BufNewFile,BufRead *.cl   set syntax=cpp
 autocmd BufNewFile,BufReadPost *.ino,*.pde set filetype=cpp
 
-let vim_markdown_preview_github=1
+"let vim_markdown_preview_github=1
