@@ -213,8 +213,8 @@ if has("autocmd")
 	augroup my_autocmds
 		autocmd!
 		" Toggle insert/visual line numbers
-		autocmd InsertEnter * :set number | :set norelativenumber
-		autocmd InsertLeave * :set number | :set relativenumber
+		" autocmd InsertEnter * :set number | :set norelativenumber
+		" autocmd InsertLeave * :set number | :set relativenumber
 	augroup END
 endif
 
@@ -233,21 +233,6 @@ let g:pymode_run_bind = "<C-S-e>"
  " Override view python doc key shortcut to Ctrl-Shift-d
 let g:pymode_doc_bind = "<C-S-d>"
 
-" Set auto compete to 0
-let g:ycm_min_num_of_chars_for_completion = 2
-
-" Used by YouCompleteMe
-let g:ycm_global_ycm_extra_conf = "~/.vim/.ycm_extra_conf.py"
-
-" YouComlete me turn off auto
-let g:ycm_auto_trigger = 0
-
-" YouComplete me do not complete
-let g:ycm_min_num_of_chars_for_completion = 2
-
-" Turn off youcomleteme comment to enable
-let g:loaded_youcompleteme = 1
-
 
 " let g:airline_extensions = ['csv','whitespace']
 " let g:airline#extensions#csv#column_display = 'Name'
@@ -260,3 +245,44 @@ autocmd BufNewFile,BufRead *.cl   set syntax=cpp
 autocmd BufNewFile,BufReadPost *.ino,*.pde set filetype=cpp
 
 "let vim_markdown_preview_github=1
+
+" :W sudo saves the file
+" (useful for handling the permission-denied error)
+command! SW w !sudo tee % > /dev/null
+
+" This is totally awesome - remap jj to escape in insert mode.  You'll never type jj anyway, so it's great!
+inoremap jj <esc>
+nnoremap JJJJ <nop>
+
+" Make sure that coursor is always vertically centered on j/k moves
+set so=999
+
+" Ignore compiled files
+set wildignore=*.o,*~,*.pyc,.*.swp
+if has("win16") || has("win32")
+    set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
+else
+    set wildignore+=.git\*,.hg\*,.svn\*
+endif
+
+" Configure backspace so it acts as it should act
+set backspace=eol,start,indent
+set whichwrap+=<,>,h,l
+
+" Make sure that extra margin on left is removed
+set foldcolumn=0
+
+" Enable Ctrl-A/Ctrl-X to work on octal and hex numbers, as well as characters
+set nrformats=octal,hex,alpha
+
+" Smart way to move between windows
+map <C-j> <C-W>j
+map <C-k> <C-W>k
+map <C-h> <C-W>h
+map <C-l> <C-W>l
+
+" map Ctrl+f11 to GoRun
+nnoremap <C-F11> :GoRun<CR>
+
+source /home/amanusk/.vim/neocomp.vim
+
