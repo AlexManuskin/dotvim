@@ -50,10 +50,6 @@ map <S-Insert> <MiddleMouse>
 map! <S-Insert> <MiddleMouse>
 
 
-map <C-Space> <C-n>
-map! <C-Space> <C-n>
-
-
 " Switch on syntax highlighting if it wasn't on yet.
 if !exists("syntax_on")
 	syntax on
@@ -86,8 +82,8 @@ map <F2> :NERDTreeTabsToggle<cr>
 "map F7  F8 to swich tabs
 map <F6> :tabp<cr>
 inoremap <F6> <C-o>:tabp<cr>
-map <F7> :tabn<cr>
-inoremap <F7> <C-o>:tabn<cr>
+" map <F7> :tabn<cr>
+" inoremap <F7> <C-o>:tabn<cr>
 
 " set split to right and below instead of left and above
 set splitright
@@ -147,23 +143,24 @@ command! QA qa
 " noremap <Right> <NOP>
 
 "A function to toggle white spaces on and off using <F5>
-let s:hilightws = 1
-fun! ToggleSpell()
-	if s:hilightws
-		setlocal spell spelllang=en_us spell! spell?
-"		2mat ErrorMsg '\%81v.'
-		ToggleWhitespace
-		let s:hilightws = 0
-    else
-		setlocal spell spelllang=en_us
-		ToggleWhitespace
-        let s:hilightws = 1
-    endif
-endfun
+"let s:hilightws = 1
+"fun! ToggleSpell()
+"	if s:hilightws
+"		setlocal spell spelllang=en_us spell! spell?
+""		2mat ErrorMsg '\%81v.'
+"		ToggleWhitespace
+"		let s:hilightws = 0
+"    else
+"		setlocal spell spelllang=en_us
+"		ToggleWhitespace
+"        let s:hilightws = 1
+"    endif
+"endfun
 
 highlight ExtraWhitespace ctermbg=green guibg=lightgreen
-" Call spell Toggle
-map <F4> :call ToggleSpell() <cr>
+
+" Call spell Toggle: could be handled by unimpared
+" map <F4> :call ToggleSpell() <cr>
 
 " Refresh the page
 map <F5> :edit <cr>
@@ -220,22 +217,18 @@ endif
 
 " Run NERDTreeTabs by default
 " let g:nerdtree_tabs_open_on_console_startup=1
+
 " Set NERDTree to 30
 let NERDTreeWinSize = 20
 
-" Python plugins additions
-" Override go-to.definition key shortcut to Ctrl-]
-let g:pymode_rope_goto_definition_bind = "<C-]>"
 
- " Override run current python file key shortcut to Ctrl-Shift-e
-let g:pymode_run_bind = "<C-S-e>"
-
- " Override view python doc key shortcut to Ctrl-Shift-d
-let g:pymode_doc_bind = "<C-S-d>"
-
-
+" Airline additions
 " let g:airline_extensions = ['csv','whitespace']
 " let g:airline#extensions#csv#column_display = 'Name'
+" Do not show branch
+let g:airline_section_b = ''
+" Do not show encoding
+let g:airline_section_y = ''
 
 "let g:csv_no_conceal = 1
 " set clipboard=unnamedplus
@@ -246,7 +239,7 @@ autocmd BufNewFile,BufReadPost *.ino,*.pde set filetype=cpp
 
 "let vim_markdown_preview_github=1
 
-" :W sudo saves the file
+" :SW sudo saves the file
 " (useful for handling the permission-denied error)
 command! SW w !sudo tee % > /dev/null
 
@@ -255,7 +248,7 @@ inoremap jj <esc>
 nnoremap JJJJ <nop>
 
 " Make sure that coursor is always vertically centered on j/k moves
-set so=999
+" set so=999
 
 " Ignore compiled files
 set wildignore=*.o,*~,*.pyc,.*.swp
@@ -273,16 +266,56 @@ set whichwrap+=<,>,h,l
 set foldcolumn=0
 
 " Enable Ctrl-A/Ctrl-X to work on octal and hex numbers, as well as characters
-set nrformats=octal,hex,alpha
+set nrformats=octal,hex ",alpha
 
 " Smart way to move between windows
-map <C-j> <C-W>j
-map <C-k> <C-W>k
-map <C-h> <C-W>h
-map <C-l> <C-W>l
+" map <A-J> <C-W>j
+" map <A-K> <C-W>k
+" map <A-H> <C-W>h
+" map <A-L> <C-W>l
 
-" map Ctrl+f11 to GoRun
-nnoremap <C-F11> :GoRun<CR>
-
+" Neocomplete
 source /home/amanusk/.vim/neocomp.vim
+" Golang
+source /home/amanusk/.vim/govim.vim
+" Python
+source /home/amanusk/.vim/pyvim.vim
+" Latex
+source /home/amanusk/.vim/texvim.vim
+" Convert files
+source /home/amanusk/.vim/convert.vim
+
+" Use for snippets
+"
+" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+let g:UltiSnipsExpandTrigger="<c-b>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+
+" If you want :UltiSnipsEdit to split your window.
+let g:UltiSnipsEditSplit="vertical"
+
+
+" Run rustFmt on save
+let g:rustfmt_autosave = 1
+
+" Syntactic recomended setup
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+" Enable of disable syntastic: See syntastic help passive
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+" let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_loc_list_height=5
+
+nnoremap <leader>sc :SyntasticCheck<cr>
+
+" Add space after comment
+" let g:NERDSpaceDelims = 1
+
+" vim-instant-markdown
+let g:instant_markdown_autostart = 0
 

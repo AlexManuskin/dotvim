@@ -68,3 +68,22 @@ endif
 " For perlomni.vim setting.
 " https://github.com/c9s/perlomni.vim
 let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
+
+
+if !exists('g:neocomplete#sources#omni#input_patterns')
+let g:neocomplete#sources#omni#input_patterns = {}
+endif
+let g:neocomplete#sources#omni#input_patterns.tex =
+    \ g:vimtex#re#neocomplete
+
+" This is added to work with jedi-vim for python
+if !exists('g:neocomplete#force_omni_input_patterns')
+let g:neocomplete#force_omni_input_patterns = {}
+endif
+	autocmd FileType python setlocal omnifunc=jedi#completions
+	let g:jedi#completions_enabled = 0
+	let g:jedi#auto_vim_configuration = 0
+	let g:jedi#smart_auto_mappings = 0
+	let g:neocomplete#force_omni_input_patterns.python =
+	\ '\%([^. \t]\.\|^\s*@\|^\s*from\s.\+import \|^\s*from \|^\s*import \)\w*'
+	" alternative pattern: '\h\w*\|[^. \t]\.\w*'

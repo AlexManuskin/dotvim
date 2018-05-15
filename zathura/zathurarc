@@ -1,5 +1,3 @@
-set recolor true
-set recolor-darkcolor "#000000"
-set recolor-lightcolor "#ffffd9"
-set window-title-basename "true"
-set selection-clipboard "clipboard"
+map Down PageDown
+map PageUp j
+
