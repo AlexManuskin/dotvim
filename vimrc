@@ -317,5 +317,19 @@ nnoremap <leader>sc :SyntasticCheck<cr>
 " let g:NERDSpaceDelims = 1
 
 " vim-instant-markdown
-let g:instant_markdown_autostart = 0
+let g:instant_markdown_autostart = 1
 
+let delimitMate_autoclose = 0
+
+
+
+" For rust
+let g:racer_cmd = "/home/amanusk/.cargo/bin/racer"
+let $RUST_SRC_PATH="/home/amanusk/rust/rust/src"
+let g:racer_experimental_completer = 1
+
+autocmd FileType rust let g:syntastic_rust_checkers = ['rustc']
+au FileType rust nmap gd <Plug>(rust-def)
+au FileType rust nmap gs <Plug>(rust-def-split)
+au FileType rust nmap gx <Plug>(rust-def-vertical)
+au FileType rust nmap <leader>gd <Plug>(rust-doc)
