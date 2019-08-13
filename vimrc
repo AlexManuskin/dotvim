@@ -8,8 +8,11 @@ call pathogen#helptags()
 " Set soft tab stop - how many columns vim uses when you hit Tab in insert mode. If softtabstop is less than tabstop and expandtab is not set, vim will use a combination of tabs and spaces to make up the desired spacing. If softtabstop equals tabstop and expandtab is not set, vim will always use tabs. When expandtab is set, vim will always use the appropriate number of spaces
 " Set tab indentation - how many columns text is indented with the reindent operations (<< and >>) and automatic C-style indentation
 " Set no expand tab - when expandtab is set, hitting Tab in insert mode will produce the appropriate number of spaces
-:set tabstop=4 softtabstop=4 shiftwidth=4 expandtab
+set tabstop=4 softtabstop=4 shiftwidth=4 expandtab
 
+" add yaml stuffs
+au! BufNewFile,BufReadPost *.{yaml,yml} set filetype=yaml
+autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 
 " Indent following lines to the indentation of previous line.
 set autoindent
@@ -33,17 +36,21 @@ set nocompatible
 set backspace=2
 set foldmethod=marker
 
-" set color sheme
-colorscheme default
 " Use 256 colours (Use this setting only if your terminal supports 256
 " colours)
 set t_Co=256
+
+" set color sheme
+colorscheme default
+" colorscheme monokai
+set background=light
 
 " Hide the mouse when typing text
 set mousehide
 
 " Ebanle mouse
 set mouse=a
+set ttymouse=xterm
 
 " Make shift-insert work like in Xterm
 map <S-Insert> <MiddleMouse>
@@ -80,8 +87,8 @@ map <F3> :TagbarToggle<CR>
 map <F2> :NERDTreeTabsToggle<cr>
 
 "map F7  F8 to swich tabs
-map <F6> :tabp<cr>
-inoremap <F6> <C-o>:tabp<cr>
+" map <F6> :tabp<cr>
+" inoremap <F6> <C-o>:tabp<cr>
 " map <F7> :tabn<cr>
 " inoremap <F7> <C-o>:tabn<cr>
 
@@ -278,12 +285,18 @@ set nrformats=octal,hex ",alpha
 source /home/amanusk/.vim/neocomp.vim
 " Golang
 source /home/amanusk/.vim/govim.vim
+" Rust
+source /home/amanusk/.vim/rustvim.vim
 " Python
 source /home/amanusk/.vim/pyvim.vim
 " Latex
 source /home/amanusk/.vim/texvim.vim
 " Convert files
 source /home/amanusk/.vim/convert.vim
+" Grammarous
+source /home/amanusk/.vim/grammer.vim
+" InstantRst
+source /home/amanusk/.vim/instantrt.vim
 
 " Use for snippets
 "
@@ -296,13 +309,10 @@ let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 let g:UltiSnipsEditSplit="vertical"
 
 
-" Run rustFmt on save
-let g:rustfmt_autosave = 1
-
 " Syntactic recomended setup
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
+" set statusline+=%#warningmsg#
+" set statusline+=%{SyntasticStatuslineFlag()}
+" set statusline+=%*
 
 " Enable of disable syntastic: See syntastic help passive
 let g:syntastic_always_populate_loc_list = 1
@@ -317,19 +327,62 @@ nnoremap <leader>sc :SyntasticCheck<cr>
 " let g:NERDSpaceDelims = 1
 
 " vim-instant-markdown
-let g:instant_markdown_autostart = 1
+let g:instant_markdown_autostart = 0
 
-let delimitMate_autoclose = 0
+let delimitMate_autoclose = 1
 
 
+" For solidity
+" augroup quickfix
+"   autocmd!
+"   autocmd QuickFixCmdPost make nested copen
+" augroup END
+"
+" For javascript
+" autocmd FileType javascript let g:syntastic_javascript_checkers = ['jshint']
 
-" For rust
-let g:racer_cmd = "/home/amanusk/.cargo/bin/racer"
-let $RUST_SRC_PATH="/home/amanusk/rust/rust/src"
-let g:racer_experimental_completer = 1
+" au BufNewFile,BufRead *.vy set filetype=python
+set term=screen-256color
+" set term=ansi
 
-autocmd FileType rust let g:syntastic_rust_checkers = ['rustc']
-au FileType rust nmap gd <Plug>(rust-def)
-au FileType rust nmap gs <Plug>(rust-def-split)
-au FileType rust nmap gx <Plug>(rust-def-vertical)
-au FileType rust nmap <leader>gd <Plug>(rust-doc)
+
+" Table mode
+function! s:isAtStartOfLine(mapping)
+  let text_before_cursor = getline('.')[0 : col('.')-1]
+  let mapping_pattern = '\V' . escape(a:mapping, '\')
+  let comment_pattern = '\V' . escape(substitute(&l:commentstring, '%s.*$', '', ''), '\')
+  return (text_before_cursor =~? '^' . ('\v(' . comment_pattern . '\v)?') . '\s*\v' . mapping_pattern . '\v$')
+endfunction
+
+
+inoreabbrev <expr> <bar><bar>
+          \ <SID>isAtStartOfLine('\|\|') ?
+          \ '<c-o>:TableModeEnable<cr><bar><space><bar><left><left>' : '<bar><bar>'
+inoreabbrev <expr> __
+          \ <SID>isAtStartOfLine('__') ?
+          \ '<c-o>:silent! TableModeDisable<cr>' : '__'
+
+" Help menu
+inoremap <F1> <Esc>
+noremap <F1> :call MapF1()<CR>
+
+function! MapF1()
+  if &buftype == "help"
+    exec 'quit'
+  else
+    exec 'help'
+  endif
+endfunction
+
+" Ale configs
+let g:ale_set_balloons = 1
+let g:ale_set_loclist = 0
+let g:ale_set_quickfix = 1
+let g:ale_list_window_size = 5
+nmap <silent> <leader>k <Plug>(ale_previous_wrap)
+nmap <silent> <leader>j <Plug>(ale_next_wrap)
+let g:ale_markdown_remark_lint_options = "-u preset-lint-recommended"
+
+let g:EditorConfig_exec_path = '/usr/bin/editorconfig'
+
+

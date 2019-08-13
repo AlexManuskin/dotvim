@@ -20,5 +20,13 @@ au Filetype go nnoremap <leader>v :vsp <CR>:exe "GoDef" <CR>
 au Filetype go nnoremap <leader>s :sp <CR>:exe "GoDef"<CR>
 au Filetype go nnoremap <leader>t :tab split <CR>:exe "GoDef"<CR>
 
-nnoremap gb :GoBuild<cr>
-nnoremap gt :GoTest<cr>
+"Enable golang autocompletion
+"if !exists('g:neocomplete#sources#omni#input_patterns')
+"    let g:neocomplete#sources#omni#input_patterns = {}
+"endif
+"    let g:neocomplete#sources#omni#input_patterns.go = '[^.[:digit:] *\t]\.\w*'
+
+command! Gb GoBuild
+command! Gt GoTest
+
+" let g:auto_type_info=0
