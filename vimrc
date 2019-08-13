@@ -2,8 +2,6 @@
 execute pathogen#infect()
 call pathogen#helptags()
 
-"set term=nxterm
-
 " Set tab stop - how many columns a tab counts for. Linux kernel code expects each tab to be eight columns wide. Visual Studio expects each tab to be four columns wide. This is the only command here that will affect how existing text displays
 " Set soft tab stop - how many columns vim uses when you hit Tab in insert mode. If softtabstop is less than tabstop and expandtab is not set, vim will use a combination of tabs and spaces to make up the desired spacing. If softtabstop equals tabstop and expandtab is not set, vim will always use tabs. When expandtab is set, vim will always use the appropriate number of spaces
 " Set tab indentation - how many columns text is indented with the reindent operations (<< and >>) and automatic C-style indentation
@@ -86,11 +84,6 @@ map <F3> :TagbarToggle<CR>
 "Nerd tree plugin
 map <F2> :NERDTreeTabsToggle<cr>
 
-"map F7  F8 to swich tabs
-" map <F6> :tabp<cr>
-" inoremap <F6> <C-o>:tabp<cr>
-" map <F7> :tabn<cr>
-" inoremap <F7> <C-o>:tabn<cr>
 
 " set split to right and below instead of left and above
 set splitright
@@ -143,31 +136,8 @@ command! Wa wa
 command! Qa qa
 command! QA qa
 
-" noremap for arrows
-" noremap <Up> <NOP>
-" noremap <Down> <NOP>
-" noremap <Left> <NOP>
-" noremap <Right> <NOP>
-
-"A function to toggle white spaces on and off using <F5>
-"let s:hilightws = 1
-"fun! ToggleSpell()
-"	if s:hilightws
-"		setlocal spell spelllang=en_us spell! spell?
-""		2mat ErrorMsg '\%81v.'
-"		ToggleWhitespace
-"		let s:hilightws = 0
-"    else
-"		setlocal spell spelllang=en_us
-"		ToggleWhitespace
-"        let s:hilightws = 1
-"    endif
-"endfun
-
 highlight ExtraWhitespace ctermbg=green guibg=lightgreen
 
-" Call spell Toggle: could be handled by unimpared
-" map <F4> :call ToggleSpell() <cr>
 
 " Refresh the page
 map <F5> :edit <cr>
@@ -237,8 +207,6 @@ let g:airline_section_b = ''
 " Do not show encoding
 let g:airline_section_y = ''
 
-"let g:csv_no_conceal = 1
-" set clipboard=unnamedplus
 
 autocmd FileType python map <buffer> <leader>8 :call Pep8()<CR>
 autocmd BufNewFile,BufRead *.cl   set syntax=cpp
@@ -275,28 +243,6 @@ set foldcolumn=0
 " Enable Ctrl-A/Ctrl-X to work on octal and hex numbers, as well as characters
 set nrformats=octal,hex ",alpha
 
-" Smart way to move between windows
-" map <A-J> <C-W>j
-" map <A-K> <C-W>k
-" map <A-H> <C-W>h
-" map <A-L> <C-W>l
-
-" Neocomplete
-source /home/amanusk/.vim/neocomp.vim
-" Golang
-source /home/amanusk/.vim/govim.vim
-" Rust
-source /home/amanusk/.vim/rustvim.vim
-" Python
-source /home/amanusk/.vim/pyvim.vim
-" Latex
-source /home/amanusk/.vim/texvim.vim
-" Convert files
-source /home/amanusk/.vim/convert.vim
-" Grammarous
-source /home/amanusk/.vim/grammer.vim
-" InstantRst
-source /home/amanusk/.vim/instantrt.vim
 
 " Use for snippets
 "
@@ -309,18 +255,6 @@ let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 let g:UltiSnipsEditSplit="vertical"
 
 
-" Syntactic recomended setup
-" set statusline+=%#warningmsg#
-" set statusline+=%{SyntasticStatuslineFlag()}
-" set statusline+=%*
-
-" Enable of disable syntastic: See syntastic help passive
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-" let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-let g:syntastic_loc_list_height=5
-
 nnoremap <leader>sc :SyntasticCheck<cr>
 
 " Add space after comment
@@ -331,15 +265,6 @@ let g:instant_markdown_autostart = 0
 
 let delimitMate_autoclose = 1
 
-
-" For solidity
-" augroup quickfix
-"   autocmd!
-"   autocmd QuickFixCmdPost make nested copen
-" augroup END
-"
-" For javascript
-" autocmd FileType javascript let g:syntastic_javascript_checkers = ['jshint']
 
 " au BufNewFile,BufRead *.vy set filetype=python
 set term=screen-256color
@@ -386,3 +311,19 @@ let g:ale_markdown_remark_lint_options = "-u preset-lint-recommended"
 let g:EditorConfig_exec_path = '/usr/bin/editorconfig'
 
 
+" Neocomplete
+source /home/amanusk/.vim/neocomp.vim
+" Golang
+source /home/amanusk/.vim/govim.vim
+" Rust
+source /home/amanusk/.vim/rustvim.vim
+" Python
+source /home/amanusk/.vim/pyvim.vim
+" Latex
+source /home/amanusk/.vim/texvim.vim
+" Convert files
+source /home/amanusk/.vim/convert.vim
+" Grammarous
+source /home/amanusk/.vim/grammer.vim
+" InstantRst
+source /home/amanusk/.vim/instantrt.vim
