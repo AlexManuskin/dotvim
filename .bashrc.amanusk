@@ -7,3 +7,5 @@ PROMPT_COMMAND='pwd > "${HOME}/.cwd"'
 
 # Change to saved working dir
 [[ -f "${HOME}/.cwd" ]] && cd "$(< ${HOME}/.cwd)"
+
+SHELL_SESSION_HISTORY=0

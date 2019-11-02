@@ -275,15 +275,18 @@ set nrformats=octal,hex ",alpha
 " map <A-L> <C-W>l
 
 " Neocomplete
-source /home/amanusk/.vim/neocomp.vim
+"source /Users/amanusk/.vim/neocomp.vim
 " Golang
-source /home/amanusk/.vim/govim.vim
+"source /Users/amanusk/.vim/govim.vim
 " Python
-source /home/amanusk/.vim/pyvim.vim
+"
+"source /Users/amanusk/.vim/pyvim.vim
 " Latex
-source /home/amanusk/.vim/texvim.vim
+source /Users/amanusk/.vim/texvim.vim
 " Convert files
-source /home/amanusk/.vim/convert.vim
+source /Users/amanusk/.vim/convert.vim
+
+source /Users/amanusk/.vim/rustvim.vim
 
 " Use for snippets
 "
@@ -296,8 +299,6 @@ let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 let g:UltiSnipsEditSplit="vertical"
 
 
-" Run rustFmt on save
-let g:rustfmt_autosave = 1
 
 " Syntactic recomended setup
 set statusline+=%#warningmsg#
@@ -311,8 +312,6 @@ let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_wq = 0
 let g:syntastic_loc_list_height=5
 
-nnoremap <leader>sc :SyntasticCheck<cr>
-
 " Add space after comment
 " let g:NERDSpaceDelims = 1
 
@@ -320,16 +319,3 @@ nnoremap <leader>sc :SyntasticCheck<cr>
 let g:instant_markdown_autostart = 1
 
 let delimitMate_autoclose = 0
-
-
-
-" For rust
-let g:racer_cmd = "/home/amanusk/.cargo/bin/racer"
-let $RUST_SRC_PATH="/home/amanusk/rust/rust/src"
-let g:racer_experimental_completer = 1
-
-autocmd FileType rust let g:syntastic_rust_checkers = ['rustc']
-au FileType rust nmap gd <Plug>(rust-def)
-au FileType rust nmap gs <Plug>(rust-def-split)
-au FileType rust nmap gx <Plug>(rust-def-vertical)
-au FileType rust nmap <leader>gd <Plug>(rust-doc)

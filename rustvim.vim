@@ -3,8 +3,8 @@
 let g:rustfmt_autosave = 1
 
 " For rust
-let g:racer_cmd = "/home/amanusk/.cargo/bin/racer"
-let $RUST_SRC_PATH="/home/amanusk/rust/rust/src"
+let g:racer_cmd = "/Users/amanusk/.cargo/bin/racer"
+let $RUST_SRC_PATH="/Users/amanusk/.rustup/toolchains/nightly-x86_64-apple-darwin/lib/rustlib/src/rust/src"
 let g:racer_experimental_completer = 1
 
 " autocmd FileType rust let g:syntastic_rust_checkers = ['cargo']
