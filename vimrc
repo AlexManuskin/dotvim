@@ -310,6 +310,8 @@ let g:ale_markdown_remark_lint_options = "-u preset-lint-recommended"
 
 let g:EditorConfig_exec_path = '/usr/bin/editorconfig'
 
+" Start deoplete
+" let g:deoplete#enable_at_startup = 1
 
 " Neocomplete
 source /home/amanusk/.vim/neocomp.vim
@@ -317,6 +319,8 @@ source /home/amanusk/.vim/neocomp.vim
 source /home/amanusk/.vim/govim.vim
 " Rust
 source /home/amanusk/.vim/rustvim.vim
+" TypeScript
+source /home/amanusk/.vim/ts.vim
 " Python
 source /home/amanusk/.vim/pyvim.vim
 " Latex
