@@ -319,3 +319,4 @@ let g:syntastic_loc_list_height=5
 let g:instant_markdown_autostart = 1
 
 let delimitMate_autoclose = 0
+
