@@ -10,6 +10,9 @@ call pathogen#helptags()
 " Set no expand tab - when expandtab is set, hitting Tab in insert mode will produce the appropriate number of spaces
 :set tabstop=4 softtabstop=4 shiftwidth=4 expandtab
 
+" add yaml stuffs
+au! BufNewFile,BufReadPost *.{yaml,yml} set filetype=yaml
+autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 
 " Indent following lines to the indentation of previous line.
 set autoindent
@@ -79,11 +82,6 @@ map <F3> :TagbarToggle<CR>
 "Nerd tree plugin
 map <F2> :NERDTreeTabsToggle<cr>
 
-"map F7  F8 to swich tabs
-map <F6> :tabp<cr>
-inoremap <F6> <C-o>:tabp<cr>
-" map <F7> :tabn<cr>
-" inoremap <F7> <C-o>:tabn<cr>
 
 " set split to right and below instead of left and above
 set splitright
@@ -136,31 +134,8 @@ command! Wa wa
 command! Qa qa
 command! QA qa
 
-" noremap for arrows
-" noremap <Up> <NOP>
-" noremap <Down> <NOP>
-" noremap <Left> <NOP>
-" noremap <Right> <NOP>
-
-"A function to toggle white spaces on and off using <F5>
-"let s:hilightws = 1
-"fun! ToggleSpell()
-"	if s:hilightws
-"		setlocal spell spelllang=en_us spell! spell?
-""		2mat ErrorMsg '\%81v.'
-"		ToggleWhitespace
-"		let s:hilightws = 0
-"    else
-"		setlocal spell spelllang=en_us
-"		ToggleWhitespace
-"        let s:hilightws = 1
-"    endif
-"endfun
 
 highlight ExtraWhitespace ctermbg=green guibg=lightgreen
-
-" Call spell Toggle: could be handled by unimpared
-" map <F4> :call ToggleSpell() <cr>
 
 " Refresh the page
 map <F5> :edit <cr>
@@ -268,25 +243,6 @@ set foldcolumn=0
 " Enable Ctrl-A/Ctrl-X to work on octal and hex numbers, as well as characters
 set nrformats=octal,hex ",alpha
 
-" Smart way to move between windows
-" map <A-J> <C-W>j
-" map <A-K> <C-W>k
-" map <A-H> <C-W>h
-" map <A-L> <C-W>l
-
-" Neocomplete
-"source /Users/amanusk/.vim/neocomp.vim
-" Golang
-"source /Users/amanusk/.vim/govim.vim
-" Python
-"
-"source /Users/amanusk/.vim/pyvim.vim
-" Latex
-source /Users/amanusk/.vim/texvim.vim
-" Convert files
-source /Users/amanusk/.vim/convert.vim
-
-source /Users/amanusk/.vim/rustvim.vim
 
 " Use for snippets
 "
@@ -316,7 +272,78 @@ let g:syntastic_loc_list_height=5
 " let g:NERDSpaceDelims = 1
 
 " vim-instant-markdown
-let g:instant_markdown_autostart = 1
 
 let delimitMate_autoclose = 0
 
+let g:instant_markdown_autostart = 0
+
+" au BufNewFile,BufRead *.vy set filetype=python
+" set term=screen-256color
+" set term=ansi
+
+
+" Table mode
+function! s:isAtStartOfLine(mapping)
+  let text_before_cursor = getline('.')[0 : col('.')-1]
+  let mapping_pattern = '\V' . escape(a:mapping, '\')
+  let comment_pattern = '\V' . escape(substitute(&l:commentstring, '%s.*$', '', ''), '\')
+  return (text_before_cursor =~? '^' . ('\v(' . comment_pattern . '\v)?') . '\s*\v' . mapping_pattern . '\v$')
+endfunction
+
+
+inoreabbrev <expr> <bar><bar>
+          \ <SID>isAtStartOfLine('\|\|') ?
+          \ '<c-o>:TableModeEnable<cr><bar><space><bar><left><left>' : '<bar><bar>'
+inoreabbrev <expr> __
+          \ <SID>isAtStartOfLine('__') ?
+          \ '<c-o>:silent! TableModeDisable<cr>' : '__'
+
+" Help menu
+inoremap <F1> <Esc>
+noremap <F1> :call MapF1()<CR>
+
+function! MapF1()
+  if &buftype == "help"
+    exec 'quit'
+  else
+    exec 'help'
+  endif
+endfunction
+
+" Ale configs
+let g:ale_set_balloons = 1
+let g:ale_set_loclist = 0
+let g:ale_set_quickfix = 1
+let g:ale_list_window_size = 5
+nmap <silent> <leader>k <Plug>(ale_previous_wrap)
+nmap <silent> <leader>j <Plug>(ale_next_wrap)
+let g:ale_markdown_remark_lint_options = "-u preset-lint-recommended"
+
+let g:EditorConfig_exec_path = '/usr/bin/editorconfig'
+
+" Start deoplete
+" let g:deoplete#enable_at_startup = 1
+
+" Neocomplete
+source $HOME/.vim/neocomp.vim
+" Golang
+source $HOME/.vim/govim.vim
+" Rust
+source $HOME/.vim/rustvim.vim
+" TypeScript
+source $HOME/.vim/ts.vim
+" Python
+source $HOME/.vim/pyvim.vim
+" Latex
+" source /User/amanusk/.vim/texvim.vim
+" Convert files
+source $HOME/.vim/convert.vim
+" Grammarous
+" source /User/amanusk/.vim/grammer.vim
+" InstantRst
+" source /User/amanusk/.vim/instantrt.vim
+
+" Add rls to path
+set runtimepath+=/Users/amanusk/.vim-plugins/LanguageClient-neovim
+
+let g:ackprg = 'ag --nogroup --nocolor --column'
