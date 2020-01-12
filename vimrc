@@ -327,13 +327,13 @@ let g:EditorConfig_exec_path = '/usr/bin/editorconfig'
 " Neocomplete
 source $HOME/.vim/neocomp.vim
 " Golang
-source $HOME/.vim/govim.vim
+autocmd BufRead,BufNewFile *.go source $HOME/.vim/govim.vim
 " Rust
-source $HOME/.vim/rustvim.vim
+autocmd BufRead,BufNewFile *.rs source $HOME/.vim/rustvim.vim
 " TypeScript
-source $HOME/.vim/ts.vim
+autocmd BufRead,BufNewFile *.ts source $HOME/.vim/ts.vim
 " Python
-source $HOME/.vim/pyvim.vim
+autocmd BufRead,BufNewFile *.py source $HOME/.vim/pyvim.vim
 " Latex
 " source /User/amanusk/.vim/texvim.vim
 " Convert files
@@ -346,4 +346,10 @@ source $HOME/.vim/convert.vim
 " Add rls to path
 set runtimepath+=/Users/amanusk/.vim-plugins/LanguageClient-neovim
 
-let g:ackprg = 'ag --nogroup --nocolor --column'
+let g:ackprg = 'ag --nogroup --nocolor --column -w'
+
+" Toggle paste mode
+set pastetoggle=cop
+
+" hard time on
+let g:hardtime_default_on = 1
