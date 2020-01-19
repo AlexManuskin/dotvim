@@ -87,8 +87,8 @@ map <F2> :NERDTreeTabsToggle<cr>
 set splitright
 set splitbelow
 
-" toggle hidden chrachters
-nmap <leader>l :set list!<CR>
+" toggle hidden chrachters: Deprecated
+" nmap <leader>l :set list!<CR>
 
 " Launch white space removal
 nmap _$ :call <SID>StripTrailingWhitespaces()<CR>
@@ -180,15 +180,22 @@ if has("autocmd")
 	\ endif
 endif
 
-if has("autocmd")
-	filetype on
-	augroup my_autocmds
-		autocmd!
-		" Toggle insert/visual line numbers
-		" autocmd InsertEnter * :set number | :set norelativenumber
-		" autocmd InsertLeave * :set number | :set relativenumber
-	augroup END
-endif
+set relativenumber
+augroup numbertoggle
+  autocmd!
+  autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
+  autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
+augroup END
+
+" if has("autocmd")
+" 	filetype on
+" 	augroup my_autocmds
+" 		autocmd!
+" 		" Toggle insert/visual line numbers
+" 		" autocmd InsertEnter * :set number | :set norelativenumber
+" 		" autocmd InsertLeave * :set number | :set relativenumber
+" 	augroup END
+" endif
 
 " Run NERDTreeTabs by default
 " let g:nerdtree_tabs_open_on_console_startup=1
@@ -254,20 +261,6 @@ let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 " If you want :UltiSnipsEdit to split your window.
 let g:UltiSnipsEditSplit="vertical"
 
-
-
-" Syntactic recomended setup
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-
-" Enable of disable syntastic: See syntastic help passive
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-" let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-let g:syntastic_loc_list_height=5
-
 " Add space after comment
 " let g:NERDSpaceDelims = 1
 
@@ -315,14 +308,26 @@ let g:ale_set_balloons = 1
 let g:ale_set_loclist = 0
 let g:ale_set_quickfix = 1
 let g:ale_list_window_size = 5
-nmap <silent> <leader>k <Plug>(ale_previous_wrap)
-nmap <silent> <leader>j <Plug>(ale_next_wrap)
+nmap <silent> <leader>k <Plug>(ale_previous_wrap_error)
+nmap <silent> <leader>j <Plug>(ale_next_wrap_error)
+nmap <silent> <leader>J <Plug>(ale_next_wrap_warning)
+nmap <silent> <leader>K <Plug>(ale_previous_wrap_warning)
 let g:ale_markdown_remark_lint_options = "-u preset-lint-recommended"
 
-let g:EditorConfig_exec_path = '/usr/bin/editorconfig'
+" Toggle ALE quick list 
+noremap <Leader>l :call QFixToggle()<CR> 
 
-" Start deoplete
-" let g:deoplete#enable_at_startup = 1
+function! QFixToggle()
+  if exists("g:qfix_win")
+    cclose
+    unlet g:qfix_win
+  else
+    copen 10
+    let g:qfix_win = bufnr("$")
+  endif
+endfunction
+
+let g:EditorConfig_exec_path = '/usr/bin/editorconfig'
 
 " Neocomplete
 source $HOME/.vim/neocomp.vim
@@ -331,9 +336,11 @@ autocmd BufRead,BufNewFile *.go source $HOME/.vim/govim.vim
 " Rust
 autocmd BufRead,BufNewFile *.rs source $HOME/.vim/rustvim.vim
 " TypeScript
-autocmd BufRead,BufNewFile *.ts source $HOME/.vim/ts.vim
+autocmd FileTYpe typescript source $HOME/.vim/ts.vim
+" JavaScript
+autocmd FileType javascript  source $HOME/.vim/js.vim
 " Python
-autocmd BufRead,BufNewFile *.py source $HOME/.vim/pyvim.vim
+autocmd FileType python source $HOME/.vim/pyvim.vim
 " Latex
 " source /User/amanusk/.vim/texvim.vim
 " Convert files
@@ -353,3 +360,4 @@ set pastetoggle=cop
 
 " hard time on
 let g:hardtime_default_on = 1
+

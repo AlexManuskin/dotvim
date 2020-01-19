@@ -1,5 +1,6 @@
 let g:tsuquyomi_completion_detail = 1
 
+let g:ale_javascript_prettier_options = "--config $HOME/.prettierc"
 
 " Disable indenter
 let g:typescript_indent_disable = 1
@@ -7,16 +8,18 @@ let g:typescript_indent_disable = 1
 
 let g:ale_linters = {
 \   'javascript': ['eslint'],
-\   'typescript': ['tsserver'],
+\   'typescript': ['tsserver', 'eslint'],
+\   'json': ['jq', 'jsonlint'],
 \   'vue': ['eslint']
 \}
 
 let g:ale_fixers = {
 \    'javascript': ['eslint'],
-\    'typescript': ['prettier'],
+\    'typescript': ['prettier', 'eslint'],
 \    'vue': ['eslint'],
 \    'scss': ['prettier'],
-\    'html': ['prettier']
+\    'html': ['prettier'],
+\    'json': ['prettier']
 \}
 
 let g:ale_fix_on_save = 1
