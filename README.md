@@ -28,17 +28,11 @@ Interactive tutorial for basic movement
 * `v` enter visual mode  
 You should always be in visual mode, unless you are inserting text. The power of vim is treating text as repeatable actions.
 
+* `/`: Search mode, jump back and forth with `n` and `N`
+
 
 ### Navigation
 * `hjkl` for moving around  
-(Try to disable the arrow keys to get used to it)  
-Add this to your .vimrc
-```
-noremap <Left> <Nop>
-noremap <Right> <Nop>
-noremap <Up> <Nop>
-noremap <Down> <Nop>
-```
 
 * `Ctrl+o` Jump to the last palce you have viewed
 * `Ctrl+i/Tab` Jump forward
@@ -64,14 +58,13 @@ Examples:
 * Change word
 * Change between parenthesis 
 
-
 ### Saving and exiting
 * `:w` write
 * `:q` quit
 * `:wa` write all
 * `:wq` write and quit
 TIP:
-Remap the following to save furstration:
+Remap the following to save frustration:
 ```
 command! Q q
 command! W w
@@ -82,6 +75,13 @@ command! Wa wa
 command! Qa qa
 command! QA qa
 ```
+### More useful keys
+`>` indent selected line or text right
+`<` indent selected or text left
+`=` Align indentation
+`*` Search word under cursor forward
+`#` Search word under cursor back
+
 
 ## Plugins
 Vim has an extensive plugin system. You can find a plugin for syntax highlight, spell check, linting, code completion, git integration.

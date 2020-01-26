@@ -1,0 +1,474 @@
+
+// Visual blocks
+interface GasPrice {
+  class_let: Denom;
+  class_it: string;
+  class_be: string;
+}
+
+// Delete in [ {
+interface {gas_prices: [GasPrice];}
+
+interface Balance {
+  height: string;
+  result: [Coin];
+}
+
+type SendOptions = {
+  memo?: string;
+  chainName?: ChainName;
+  feeDenom?: Denom; edit
+};
+
+
+
+// Repeate operation with .
+enum AccountType {
+  STANDARD_OLD = 'core/Account',
+  VESTING_OLD = 'core/LazyGradedVestingAccount',
+  NEW_OLD = 'core/LazyGradedVestingAccount',
+}
+
+export async function getBalance(
+  address: string,
+  chainName: ChainName,
+): Promise<any> {
+  return get(chainName, `/bank/balances/${address}`);
+}
+
+function getValue(account: StandardAccount | VestingAccount): AccountValue {
+  return account.result.type === AccountType.STANDARD
+    ? account.result.value
+    : account.result.value.BaseVestingAccount.BaseAccount edit
+}
+
+async function getChainId(chainName: ChainName): Promise<string> {
+  const latest = await get(chainName, '/blocks/latest');
+  const { chain_id } = latest.block.header;
+  return chain_id;
+}
+
+async function getAccountInfo(
+  chainName: ChainName,
+  from: string,
+): Promise<[string, string]> {
+  const account = await get(chainName, `/auth/accounts/${from}`);
+  console.log('account =', account);
+  const { account_number, sequence } = getValue(account);
+
+  return [account_number, sequence];
+}
+
+async function getGasEstimate(
+  msgSend: Record<string, any>,
+  feeDenom: Denom,
+  price: string,
+  chainName: ChainName,
+  adjustment?: string,
+): Promise<Fee> {
+  // Gas prices are 0.015 u* for all denoms at the moment
+  let gas_adjustment: string;
+  if (adjustment) {
+    gas_adjustment = adjustment;
+  } else {
+    gas_adjustment = DEFAULT_GAS_COEFFICIENT;
+  }
+
+  const gasPrice: GasAdjustedPrice = {
+    gas_adjustment,
+    gas_prices: [
+      {
+        denom: feeDenom,
+        amount: price,
+      },
+    ],
+  };
+
+  const fakeFee = {
+    fee: {
+      // Leave gas at 0 to get estimate
+      gas: '0',
+      // The amount is not important, the denom should be the fee denom
+      amount: [
+        {
+          denom: feeDenom,
+          amount: '1',
+        },
+      ],
+    },
+  };
+
+  const estimateFeeTx = {
+    tx: {
+      msg: [msgSend],
+      ...fakeFee,
+    },
+    ...gasPrice,
+  };
+  console.log('estimateTx=', JSON.stringify(estimateFeeTx));
+
+  const gasEstimate = await post(chainName, '/txs/estimate_fee', estimateFeeTx);
+  const gasAdjusted = {
+    gas: gasEstimate.result.gas,
+    amount: gasEstimate.result.fees,
+  };
+  return gasAdjusted;
+}
+
+export class TerraThreshSigClient {
+  private mainnet: boolean;
+  private p2: Party2;
+  private p2MasterKeyShare: Party2Share;
+  private db: any;
+  private useAsyncBroadcast: boolean;
+
+  constructor(mainnet = false, useAsyncBroadcast = false) {
+    this.mainnet = mainnet;
+    const httpUrl = mainnet;
+    this.p2 = new Party2(P1_ENDPOINT);
+    this.useAsyncBroadcast = useAsyncBroadcast;
+  }
+
+  public async init() {
+    this.initDb();
+    return this.initMasterKey();
+  }
+
+  /**
+   * get the address of the specified index. If the index is omitted, will return the default address (of index 0).
+   * @param addressIndex HD index of the address to get
+   */
+  public getAddress(addressIndex = 0): string {
+    const publicKey = this.getPublicKey(addressIndex);
+    const publicKeyHex = publicKey.encode('hex', true);
+    const publicKeyBuffer = Buffer.from(publicKeyHex, 'hex');
+    const address = terra.getAccAddress(publicKeyBuffer);
+    const dbAddress = this.db
+      .get('addresses')
+      .find({ address })
+      .value();
+    if (!dbAddress) {
+      this.db
+        .get('addresses')
+        .push({ address, index: addressIndex })
+        .write();
+    }
+    return address;
+  }
+
+  /**
+   * Execute a transfer transaction of two terra addresses
+   */
+  public async transfer(
+    from: string,
+    to: string,
+    amount: string,
+    denom: Denom,
+    options?: SendOptions,
+    sendAll?: boolean,
+    dryRun?: boolean,
+  ) {
+    const chainName: ChainName = (options && options.chainName) || 'vodka';
+    const chain_id = await getChainId(chainName);
+
+    if (sendAll) {
+      const balance = await getBalance(from, chainName);
+      console.log('balance=', balance);
+      amount = getAmountOfDenom(balance, denom);
+      console.log('Balance of', denom, 'is', amount);
+      // Lower amount by one to get correct gas estimation
+      amount = (Number(amount) - 1).toString();
+    }
+
+    let msgSend = terra.buildSend(
+      [
+        {
+          amount: amount,
+          denom: denom,
+        },
+      ],
+      from,
+      to,
+    );
+
+    const [account_number, sequence] = await getAccountInfo(chainName, from);
+
+    console.log('msgSend=', msgSend);
+
+    const memo: string = (options && options.memo) || '';
+
+    const feeDenom: Denom = (options && options.feeDenom) || 'uluna';
+    // Need more gas when sending all, as gas estimation is for a failed transaction
+    const gasEstimate = await getGasEstimate(
+      msgSend,
+      feeDenom,
+      DEFULT_GAS_PRICE,
+      chainName,
+    );
+
+    console.log('gasEstimate=', gasEstimate);
+
+    // Update amount to deduct fees
+    if (sendAll) {
+      // Deduct the fees, add back the -1 we deducted for fee estimation
+      const updateAmount: number =
+        parseInt(amount) - parseInt(gasEstimate.amount[0].amount) + 1;
+      console.log('Updated amount=', updateAmount);
+      msgSend = terra.buildSend(
+        [
+          {
+            amount: updateAmount.toString(),
+            denom,
+          },
+        ],
+        from,
+        to,
+      );
+    }
+
+    console.log('memo=', memo);
+
+    const stdTx = terra.buildStdTx([msgSend], gasEstimate, memo);
+
+    console.log('stdTX=', stdTx);
+
+    const signer = this.getMPCSigner(from);
+
+    const metaData: SignMetaData = {
+      sequence,
+      account_number,
+      chain_id,
+    };
+
+    // The nice thing is that our signer and the terra signer accept the same input
+    const signature: Signature = await getSingature(
+      stdTx.value,
+      signer,
+      metaData,
+    );
+    console.log('Manual Signature', signature);
+
+    const signedTx = terra.createSignedTx(stdTx.value, signature);
+    console.log('singedTx=', signedTx);
+
+    const broadcastBody = terra.createBroadcastBody(signedTx, 'block');
+    console.log('broadcastBody=', broadcastBody);
+
+    if (dryRun) {
+      console.log('------ Dry Run ----- ');
+      console.log(broadcastBody);
+    } else {
+      console.log(' ===== Executing ===== ');
+      console.log(broadcastBody);
+      const res = await post(chainName, `/txs`, JSON.parse(broadcastBody));
+      console.log('Send Res', res);
+    }
+  }
+
+  private initDb() {
+    ensureDirSync(CLIENT_DB_PATH);
+    const adapter = new FileSync(`${CLIENT_DB_PATH}/db.json`);
+    this.db = low(adapter);
+    this.db.defaults({ mkShare: null, addresses: [] }).write();
+  }
+
+  /**
+   * Initialize the client's master key.
+   * Will either generate a new one by the 2 party protocol, or restore one from previous session.
+   * @return {Promise}
+   */
+  private async initMasterKey() {
+    this.p2MasterKeyShare = await this.restoreOrGenerateMasterKey();
+  }
+
+  /**
+   * @return {Elliptic.PublicKey} PubKey
+   */
+  private getPublicKey(addressIndex: number) {
+    // assuming a single default address
+    const p2ChildShare = this.p2.getChildShare(
+      this.p2MasterKeyShare,
+      HD_COIN_INDEX,
+      addressIndex,
+    );
+    return p2ChildShare.getPublicKey();
+  }
+
+  private async restoreOrGenerateMasterKey(): Promise<Party2Share> {
+    const p2MasterKeyShare = this.db.get('mkShare').value();
+    if (p2MasterKeyShare) {
+      return p2MasterKeyShare;
+    }
+
+    return this.generateMasterKeyShare();
+  }
+
+  private async generateMasterKeyShare(): Promise<Party2Share> {
+    const p2MasterKeyShare: Party2Share = await this.p2.generateMasterKey();
+    this.db.set('mkShare', p2MasterKeyShare).write();
+
+    return p2MasterKeyShare;
+  }
+
+  private getMPCSigner(fromAddress: string) {
+    return async (signMessage: string) => {
+      const addressObj: any = this.db
+        .get('addresses')
+        .find({ address: fromAddress })
+        .value();
+      const addressIndex: number = addressObj.index;
+      const p2ChildShare: Party2Share = this.p2.getChildShare(
+        this.p2MasterKeyShare,
+        HD_COIN_INDEX,
+        addressIndex,
+      );
+
+      const signMessageString =
+        typeof signMessage === 'string'
+          ? signMessage
+          : JSON.stringify(signMessage);
+
+      const signHash = Buffer.from(
+        CryptoJS.SHA256(signMessageString).toString(),
+        `hex`,
+      );
+
+      const signatureMPC: MPCSignature = await this.p2.sign(
+        signHash,
+        p2ChildShare,
+        HD_COIN_INDEX,
+        addressIndex,
+      );
+      const signature = signatureMPC.toBuffer();
+      console.log('sigBuffer=', signature);
+
+      const publicKeyBasePoint = this.getPublicKey(addressIndex);
+      const publicKeyHex = publicKeyBasePoint.encode('hex', true);
+      const publicKey = Buffer.from(publicKeyHex, 'hex');
+      console.log('publicKeyBuffer =', publicKey);
+      return { signature, publicKey };
+    };
+  }
+}
+
+/**
+ * // Get only the specific amount of a certain denom from the balance list
+ */
+function getAmountOfDenom(balanceResult: Balance, denom: Denom): string {
+  const value = balanceResult.result.find((res) => res.denom === denom);
+  return value ? value.amount : '';
+}
+
+function ensureDirSync(dirpath: string) {
+  try {
+    fs.mkdirSync(dirpath, { recursive: true });
+  } catch (err) {
+    if (err.code !== 'EEXIST') throw err;
+  }
+}
+
+/**
+ * Execute a transfer transaction using a mnemonic and regular libraries.
+ * Not using two party protocols
+ */
+export async function mnemonic_transfer(
+  mnemonic: string,
+  from: string,
+  to: string,
+  amount: string,
+  denom: Denom,
+  options?: SendOptions,
+  sendAll?: boolean,
+  dryRun?: boolean,
+) {
+  const masterKey = terra.deriveMasterKeySync(mnemonic);
+  const keypair = terra.deriveKeypair(masterKey);
+  const chainName: ChainName = (options && options.chainName) || 'vodka';
+  const chain_id = await getChainId(chainName);
+
+  if (sendAll) {
+    const balance = await getBalance(from, chainName);
+    console.log('balance=', balance);
+    amount = getAmountOfDenom(balance, denom);
+    console.log('Balance of', denom, 'is', amount);
+    // Lower amount by one to get correct gas estimation
+    amount = (Number(amount) - 1).toString();
+  }
+
+  let msgSend = terra.buildSend(
+    [
+      {
+        amount: amount,
+        denom: denom,
+      },
+    ],
+    from,
+    to,
+  );
+
+  const [account_number, sequence] = await getAccountInfo(chainName, from);
+
+  console.log('msgSend=', JSON.stringify(msgSend));
+
+  const memo: string = (options && options.memo) || '';
+
+  const feeDenom: Denom = (options && options.feeDenom) || 'uluna';
+
+  const gasEstimate = await getGasEstimate(
+    msgSend,
+    feeDenom,
+    DEFULT_GAS_PRICE,
+    chainName,
+  );
+
+  console.log('gasEstimate=', gasEstimate);
+
+  console.log('memo=', memo);
+
+  console.log('msgSend=', JSON.stringify(msgSend));
+
+  const stdTx = terra.buildStdTx([msgSend], gasEstimate, memo);
+
+  console.log('stdTX=', stdTx);
+
+  const signer = await getSigner(keypair.privateKey.toString('hex'));
+
+  const metaData: SignMetaData = {
+    sequence,
+    account_number,
+    chain_id,
+  };
+
+  // The nice thing is that our signer and the terra signer accept the same input
+  const signature: Signature = await getSingature(
+    stdTx.value,
+    signer,
+    metaData,
+  );
+  console.log('Manual Signature', signature);
+
+  const jsonTx = stdTx.value;
+  const txSignature = terra.sign(jsonTx, keypair, {
+    sequence,
+    account_number,
+    chain_id,
+  });
+
+  console.log('txSignature=', txSignature);
+
+  const signedTx = terra.createSignedTx(stdTx.value, signature);
+  console.log('singedTx=', signedTx);
+
+  const broadcastBody = terra.createBroadcastBody(signedTx, 'block');
+  console.log('broadcastBody=', broadcastBody);
+
+  if (dryRun) {
+    console.log('------ Dry Run ----- ');
+    console.log(broadcastBody);
+  } else {
+    console.log(' ===== Executing ===== ');
+    console.log(broadcastBody);
+    const res = await post(chainName, `/txs`, JSON.parse(broadcastBody));
+    console.log('Send Res', res);
+  }
+}
