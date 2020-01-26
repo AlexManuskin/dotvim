@@ -1,4 +1,4 @@
 let g:netrw_dirhistmax  =10
 let g:netrw_dirhist_cnt =2
-let g:netrw_dirhist_1='/home/amanusk/.vim/nerdtree_plugin'
-let g:netrw_dirhist_2='/home/amanusk/.vim/bundle'
+let g:netrw_dirhist_1='$HOME/.vim/nerdtree_plugin'
+let g:netrw_dirhist_2='$HOME/.vim/bundle'

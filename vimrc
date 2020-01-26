@@ -219,8 +219,6 @@ autocmd FileType python map <buffer> <leader>8 :call Pep8()<CR>
 autocmd BufNewFile,BufRead *.cl   set syntax=cpp
 autocmd BufNewFile,BufReadPost *.ino,*.pde set filetype=cpp
 
-"let vim_markdown_preview_github=1
-
 " :SW sudo saves the file
 " (useful for handling the permission-denied error)
 command! SW w !sudo tee % > /dev/null
@@ -265,9 +263,6 @@ let g:UltiSnipsEditSplit="vertical"
 " let g:NERDSpaceDelims = 1
 
 " vim-instant-markdown
-
-let delimitMate_autoclose = 0
-
 let g:instant_markdown_autostart = 0
 
 " au BufNewFile,BufRead *.vy set filetype=python

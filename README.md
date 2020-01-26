@@ -7,7 +7,6 @@
 * You never stop learning vim
 
 # Getting started
-The default settings of vim are pretty bear-boned, but still enough to get started.
 
 ## The mode modal
 There are 3 main modes for vim:  
@@ -32,7 +31,15 @@ You should always be in visual mode, unless you are inserting text. The power of
 
 ### Navigation
 * `hjkl` for moving around  
-(Try [vim-hardtime](https://github.com/takac/vim-hardtime) to really suffer)
+(Try to disable the arrow keys to get used to it)  
+Add this to your .vimrc
+```
+noremap <Left> <Nop>
+noremap <Right> <Nop>
+noremap <Up> <Nop>
+noremap <Down> <Nop>
+```
+
 * `Ctrl+o` Jump to the last palce you have viewed
 * `Ctrl+i/Tab` Jump forward
 
@@ -60,9 +67,21 @@ Examples:
 
 ### Saving and exiting
 * `:w` write
-* `:q` quite
+* `:q` quit
 * `:wa` write all
-* `:wq` write and quite
+* `:wq` write and quit
+TIP:
+Remap the following to save furstration:
+```
+command! Q q
+command! W w
+command! Wq wq
+command! WQ wq
+command! WA wa
+command! Wa wa
+command! Qa qa
+command! QA qa
+```
 
 ## Plugins
 Vim has an extensive plugin system. You can find a plugin for syntax highlight, spell check, linting, code completion, git integration.
@@ -96,6 +115,9 @@ After following installation process, simply clone the relevant repository into 
 `brew install vim`  
 Then run `vim --version` to make sure you see 
 `+lua, +python`
+
+Main configuration file is `$HOME/.vimrc`
+Additional configurations an plugins `$HOME/.vim`
 
 ### Repository installation:
 Clone this repository as .vim
