@@ -355,9 +355,9 @@ set runtimepath+=/Users/amanusk/.vim-plugins/LanguageClient-neovim
 
 let g:ackprg = 'ag --nogroup --nocolor --column -w'
 
-" Toggle paste mode
-set pastetoggle=cop
-
 " hard time on
 let g:hardtime_default_on = 1
 
+
+" Disable quick fix window and use ale
+let g:tsuquyomi_disable_quickfix = 1

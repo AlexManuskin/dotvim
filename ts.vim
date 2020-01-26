@@ -24,8 +24,6 @@ let g:ale_fixers = {
 
 let g:ale_fix_on_save = 1
 
-" Disable quick fix window and use ale
-let g:tsuquyomi_disable_quickfix = 1
 
 " hints
 set ballooneval
