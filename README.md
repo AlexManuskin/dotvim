@@ -1,24 +1,27 @@
 # Vim tutorial and useful installations
 
+![Productivity](https://images.squarespace-cdn.com/content/v1/537a9021e4b0dc8ed531ddef/1469946147339-Y7YNZVYFSZED1QJ341AF/ke17ZwdGBToddI8pDm48kBbp8ZgqefKy0cEGIuvkia9Zw-zPPgdn4jUwVcJE1ZvWEtT5uBSRWt4vQZAgTJucoTqqXjS3CfNDSuuf31e0tVGWBz9mWM4rF_XUWv4z4HztNQBEo4B-KLtZhB2i5VnxrzqWIIaSPh2v08GbKqpiV54/image-asset.png?format=1000w)
+
 ## Why use vim
 * Comes preinstalled on many many Unix-like machines
 * Support for a large and fanatic community 
 * Concepts are portable to many full featured IDEs Jet-Brains, VS-Code
+* Vim shortcuts are often avaialble in other unix programs
 * You never stop learning vim
 
 # Getting started
+## Resources to get started:
+Interactive tutorial for basic movement
+* `vimtutor`
+* [openvim](https://www.openvim.com)
+* Type `:help` in your vim
+
 
 ## The mode modal
 There are 3 main modes for vim:  
 1. Normal mode: Where you move around and do most of the things
 2. Insert mode: Where you insert text in short bursts
 3. Visual mode: For text selection, copy paste, etc
-
-## Resources to get started:
-Interactive tutorial for basic movement
-* `vimtutor`
-* [openvim](https://www.openvim.com)
-* Type `:help` in your vim
 
 ## Basic motions
 
@@ -32,7 +35,7 @@ You should always be in visual mode, unless you are inserting text. The power of
 
 
 ### Navigation
-* `hjkl` for moving around  
+* `hjkl` for moving around
 
 * `Ctrl+o` Jump to the last palce you have viewed
 * `Ctrl+i/Tab` Jump forward
@@ -76,11 +79,11 @@ command! Qa qa
 command! QA qa
 ```
 ### More useful keys
-`>` indent selected line or text right
-`<` indent selected or text left
-`=` Align indentation
-`*` Search word under cursor forward
-`#` Search word under cursor back
+* `>` indent selected line or text right
+* `<` indent selected or text left
+* `=` Align indentation
+* `*` Search word under cursor forward
+* `#` Search word under cursor back
 
 
 ## Plugins
@@ -168,3 +171,7 @@ ln -s .vim/tmux.conf .tmux.conf
 ### Resources
 * [Vim-casts](http://vimcasts.org): Many useful vim features, novice and advanced
 * Setting up vim for typescript https://www.vimfromscratch.com/articles/setting-up-vim-for-typescript/
+
+
+![Why vim looks like this](https://vintagecomputer.ca/wp-content/uploads/2015/01/LSI-ADM3A-full-keyboard.jpg)
+[Where vim came from](https://twobithistory.org/2018/08/05/where-vim-came-from.html)

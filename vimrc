@@ -55,7 +55,7 @@ map! <S-Insert> <MiddleMouse>
 
 " Switch on syntax highlighting if it wasn't on yet.
 if !exists("syntax_on")
-	syntax on
+    syntax on
 endif
 
 " Switch on search pattern highlighting.
@@ -95,15 +95,15 @@ nmap _$ :call <SID>StripTrailingWhitespaces()<CR>
 
 " remove white spaces accross the file
 function! <SID>StripTrailingWhitespaces()
-" save last search, and cursor position.
-	let _s=@/
-	let l = line(".")
-	let c = col(".")
-	" Do the business:
-	%s/\s\+$//e
-" Clean up: restore previous search history,
-	let @/=_s
-	call cursor(l, c)
+    " save last search, and cursor position.
+    let _s=@/
+    let l = line(".")
+    let c = col(".")
+    " Do the business:
+    %s/\s\+$//e
+    " Clean up: restore previous search history,
+    let @/=_s
+    call cursor(l, c)
 endfunction"
 
 " open files easly
@@ -134,8 +134,9 @@ command! Wa wa
 command! Qa qa
 command! QA qa
 
-
-highlight ExtraWhitespace ctermbg=green guibg=lightgreen
+" Highlight white spaces
+highlight RedundantSpaces ctermbg=green guibg=lightgreen
+match RedundantSpaces /\s\+$/
 
 " Refresh the page
 map <F5> :edit <cr>
@@ -145,17 +146,6 @@ set completeopt=longest,menuone
 inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 inoremap <expr> <C-n> pumvisible() ? '<C-n>' : '<C-n><C-r>=pumvisible() ? "\<lt>Down>" : ""<CR>'
 inoremap <expr> <M-,> pumvisible() ? '<C-n>' : '<C-x><C-o><C-n><C-p><C-r>=pumvisible() ? "\<lt>Down>" : ""<CR>'
-
-if has("gui_running")
-	" Turn on spell checker
-	set spell
-
-	" GUI window position and size - should be enough for 2 tabs + Tlist
-	winpos 214 20
-	set lines=999
-	set columns=999
-
-endif
 
 " set vertical column to 80 characters
 set colorcolumn=80
@@ -172,19 +162,19 @@ let g:tagbar_sort = 0
 " Set width to 30
 let g:tagbar_width = 30
 
-
+" Continue where you left off on each file
 if has("autocmd")
-	autocmd BufReadPost *
-	\ if line("'\"") > 1 && line("'\"") <= line("$") |
-	\   exe "normal! g`\"" |
-	\ endif
+    autocmd BufReadPost *
+                \ if line("'\"") > 1 && line("'\"") <= line("$") |
+                \   exe "normal! g`\"" |
+                \ endif
 endif
 
 set relativenumber
 augroup numbertoggle
-  autocmd!
-  autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
-  autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
+    autocmd!
+    autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
+    autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
 augroup END
 
 " if has("autocmd")
@@ -226,9 +216,6 @@ command! SW w !sudo tee % > /dev/null
 " This is totally awesome - remap jj to escape in insert mode.  You'll never type jj anyway, so it's great!
 inoremap jj <esc>
 nnoremap JJJJ <nop>
-
-" Make sure that coursor is always vertically centered on j/k moves
-" set so=999
 
 " Ignore compiled files
 set wildignore=*.o,*~,*.pyc,.*.swp
@@ -272,30 +259,31 @@ let g:instant_markdown_autostart = 0
 
 " Table mode
 function! s:isAtStartOfLine(mapping)
-  let text_before_cursor = getline('.')[0 : col('.')-1]
-  let mapping_pattern = '\V' . escape(a:mapping, '\')
-  let comment_pattern = '\V' . escape(substitute(&l:commentstring, '%s.*$', '', ''), '\')
-  return (text_before_cursor =~? '^' . ('\v(' . comment_pattern . '\v)?') . '\s*\v' . mapping_pattern . '\v$')
+    let text_before_cursor = getline('.')[0 : col('.')-1]
+    let mapping_pattern = '\V' . escape(a:mapping, '\')
+    let comment_pattern = '\V' . escape(substitute(&l:commentstring, '%s.*$', '', ''), '\')
+    return (text_before_cursor =~? '^' . ('\v(' . comment_pattern . '\v)?') . '\s*\v' . mapping_pattern . '\v$')
 endfunction
 
 
 inoreabbrev <expr> <bar><bar>
-          \ <SID>isAtStartOfLine('\|\|') ?
-          \ '<c-o>:TableModeEnable<cr><bar><space><bar><left><left>' : '<bar><bar>'
+            \ <SID>isAtStartOfLine('\|\|') ?
+            \ '<c-o>:TableModeEnable<cr><bar><space><bar><left><left>' : '<bar><bar>'
 inoreabbrev <expr> __
-          \ <SID>isAtStartOfLine('__') ?
-          \ '<c-o>:silent! TableModeDisable<cr>' : '__'
+            \ <SID>isAtStartOfLine('__') ?
+            \ '<c-o>:silent! TableModeDisable<cr>' : '__'
 
 " Help menu
 inoremap <F1> <Esc>
 noremap <F1> :call MapF1()<CR>
 
+" Open help menu of F1
 function! MapF1()
-  if &buftype == "help"
-    exec 'quit'
-  else
-    exec 'help'
-  endif
+    if &buftype == "help"
+        exec 'quit'
+    else
+        exec 'help'
+    endif
 endfunction
 
 " Ale configs
@@ -303,23 +291,24 @@ let g:ale_set_balloons = 1
 let g:ale_set_loclist = 0
 let g:ale_set_quickfix = 1
 let g:ale_list_window_size = 5
+" Jump to next ale error/warning
 nmap <silent> <leader>k <Plug>(ale_previous_wrap_error)
 nmap <silent> <leader>j <Plug>(ale_next_wrap_error)
 nmap <silent> <leader>J <Plug>(ale_next_wrap_warning)
 nmap <silent> <leader>K <Plug>(ale_previous_wrap_warning)
 let g:ale_markdown_remark_lint_options = "-u preset-lint-recommended"
 
-" Toggle ALE quick list 
-noremap <Leader>l :call QFixToggle()<CR> 
+" Toggle ALE quick list
+noremap <Leader>l :call QFixToggle()<CR>
 
 function! QFixToggle()
-  if exists("g:qfix_win")
-    cclose
-    unlet g:qfix_win
-  else
-    copen 10
-    let g:qfix_win = bufnr("$")
-  endif
+    if exists("g:qfix_win")
+        cclose
+        unlet g:qfix_win
+    else
+        copen 10
+        let g:qfix_win = bufnr("$")
+    endif
 endfunction
 
 let g:EditorConfig_exec_path = '/usr/bin/editorconfig'
@@ -331,7 +320,7 @@ autocmd BufRead,BufNewFile *.go source $HOME/.vim/govim.vim
 " Rust
 autocmd BufRead,BufNewFile *.rs source $HOME/.vim/rustvim.vim
 " TypeScript
-autocmd FileTYpe typescript source $HOME/.vim/ts.vim
+autocmd FileType typescript source $HOME/.vim/ts.vim
 " JavaScript
 autocmd FileType javascript  source $HOME/.vim/js.vim
 " Python
