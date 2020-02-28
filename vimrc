@@ -311,6 +311,26 @@ function! QFixToggle()
     endif
 endfunction
 
+" ALE fixers
+let g:ale_linters = {
+\   'javascript': ['eslint'],
+\   'typescript': ['tsserver', 'eslint'],
+\   'json': ['jq', 'jsonlint'],
+\   'vue': ['eslint']
+\}
+
+let g:ale_fixers = {
+\    'javascript': ['eslint', 'prettier'],
+\    'typescript': ['prettier', 'eslint'],
+\    'vue': ['eslint'],
+\    'scss': ['prettier'],
+\    'html': ['prettier'],
+\    'json': ['prettier'],
+\    'solidity': ['prettier']
+\}
+
+let g:ale_fix_on_save = 1
+
 let g:EditorConfig_exec_path = '/usr/bin/editorconfig'
 
 " Neocomplete
@@ -340,8 +360,36 @@ set runtimepath+=/Users/amanusk/.vim-plugins/LanguageClient-neovim
 let g:ackprg = 'ag --nogroup --nocolor --column -w'
 
 " hard time on
-let g:hardtime_default_on = 1
+let g:hardtime_default_on = 0
 
 
 " Disable quick fix window and use ale
 let g:tsuquyomi_disable_quickfix = 1
+
+" Required for operations modifying multiple buffers like rename.
+set hidden
+
+" Which version of rls to run
+let g:LanguageClient_serverCommands = {
+    \ 'javascript': ['javascript-typescript-stdio'],
+    \ 'rust': ['~/.cargo/bin/rustup', 'run', 'nightly-2019-07-10-x86_64-apple-darwin', 'rls'],
+    \ }
+
+" Use completing with rls
+set completefunc=LanguageClient#complete
+function LC_maps()
+  if has_key(g:LanguageClient_serverCommands, &filetype)
+    nnoremap <silent> gc :call LanguageClient#textDocument_hover()<CR>
+    nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+    nnoremap <silent> gr :call LanguageClient#textDocument_rename()<CR>
+  endif
+endfunction
+
+autocmd FileType * call LC_maps()
+
+
+" Solidity tabs
+autocmd BufNewFile,BufRead *.sol setlocal shiftwidth=4 softtabstop=4 expandtab
+autocmd BufNewFile,BufRead *.sol setlocal autoindent
+autocmd BufNewFile,BufRead *.sol setlocal cindent
+autocmd BufNewFile,BufRead *.sol setlocal smartindent
