@@ -346,7 +346,7 @@ autocmd FileType javascript  source $HOME/.vim/js.vim
 " Python
 autocmd FileType python source $HOME/.vim/pyvim.vim
 " Latex
-" source /User/amanusk/.vim/texvim.vim
+source $HOME/.vim/texvim.vim
 " Convert files
 source $HOME/.vim/convert.vim
 " Grammarous
@@ -393,3 +393,8 @@ autocmd BufNewFile,BufRead *.sol setlocal shiftwidth=4 softtabstop=4 expandtab
 autocmd BufNewFile,BufRead *.sol setlocal autoindent
 autocmd BufNewFile,BufRead *.sol setlocal cindent
 autocmd BufNewFile,BufRead *.sol setlocal smartindent
+
+" Disalbe ale for lates
+" let g:ale_pattern_options = {
+" \   '.*\.tex$': {'ale_enabled': 0},
+" \}
