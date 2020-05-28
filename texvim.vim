@@ -3,6 +3,9 @@
 " let g:livepreview_previewer = 'open -a Skim'
 " let g:livepreview_previewer = 'zathura'
 
+" Disable ALE and only use texvim
+autocmd BufEnter *.tex ALEDisable
+
 autocmd FileType tex nmap <buffer> <C-T> :!make %<CR>
 autocmd FileType tex nmap <buffer> T :!open -a Skim %:r.pdf<CR><CR>
 

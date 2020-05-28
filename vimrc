@@ -333,6 +333,7 @@ let g:ale_fix_on_save = 1
 
 let g:EditorConfig_exec_path = '/usr/bin/editorconfig'
 
+
 " Neocomplete
 source $HOME/.vim/neocomp.vim
 " Golang
@@ -340,9 +341,11 @@ autocmd BufRead,BufNewFile *.go source $HOME/.vim/govim.vim
 " Rust
 autocmd BufRead,BufNewFile *.rs source $HOME/.vim/rustvim.vim
 " TypeScript
-autocmd FileType typescript source $HOME/.vim/ts.vim
+source $HOME/.vim/ts.vim
 " JavaScript
 autocmd FileType javascript  source $HOME/.vim/js.vim
+" Solidity
+autocmd FileType solidity  source $HOME/.vim/sol.vim
 " Python
 autocmd FileType python source $HOME/.vim/pyvim.vim
 " Latex
@@ -389,7 +392,7 @@ autocmd FileType * call LC_maps()
 
 
 " Solidity tabs
-autocmd BufNewFile,BufRead *.sol setlocal shiftwidth=4 softtabstop=4 expandtab
+autocmd BufNewFile,BufRead *.sol setlocal shiftwidth=2 softtabstop=2 expandtab
 autocmd BufNewFile,BufRead *.sol setlocal autoindent
 autocmd BufNewFile,BufRead *.sol setlocal cindent
 autocmd BufNewFile,BufRead *.sol setlocal smartindent
